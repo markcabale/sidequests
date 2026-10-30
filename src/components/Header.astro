@@ -1,0 +1,21 @@
+---
+import { site } from '../site';
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const onBoxing = path === '/boxing' || path.startsWith('/boxing/');
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="/" class="logo" aria-label={`${site.name} home`}>
+      <span class="logo-mark" aria-hidden="true"></span>
+      <span class="logo-text">{site.name}</span>
+    </a>
+    <nav aria-label="Main">
+      <ul class="nav-list">
+        <li><a href="/boxing" aria-current={onBoxing ? 'page' : undefined}>Boxing</a></li>
+        <li><a href="/#sports">Explore Sports</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>

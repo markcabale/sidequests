@@ -1,0 +1,153 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import GymCover from '../../components/GymCover.astro';
+import Icon from '../../components/Icon.astro';
+import { activeGyms, formatTrialPrice, hasVerifiedPrice, type Gym } from '../../data/gyms';
+
+export const getStaticPaths = (() =>
+  activeGyms.map((gym) => ({ params: { slug: gym.slug }, props: { gym } }))) satisfies GetStaticPaths;
+
+interface Props {
+  gym: Gym;
+}
+const { gym } = Astro.props;
+
+// Primary CTA: booking URL first, then contact URL, otherwise nothing.
+const cta = gym.bookingUrl
+  ? { href: gym.bookingUrl, label: 'Book a Trial', type: 'booking' }
+  : gym.contactUrl
+    ? { href: gym.contactUrl, label: 'Contact Gym', type: 'contact' }
+    : undefined;
+// Secondary contact link when the gym has both booking and contact URLs.
+const secondaryContact = gym.bookingUrl && gym.contactUrl ? gym.contactUrl : undefined;
+const verified = hasVerifiedPrice(gym);
+const metaDescription = `${gym.name} in ${gym.area}. ${
+  verified ? `Trial: ${formatTrialPrice(gym.trialPrice)}.` : 'Ask the gym about trial prices.'
+} See the address and how to book or contact the gym.`;
+---
+
+<BaseLayout title={`${gym.name} — Boxing in ${gym.area}`} description={metaDescription}>
+  <div class="container detail">
+    <nav aria-label="Breadcrumb" class="breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href="/boxing">Boxing</a></li>
+        <li><span aria-current="page">{gym.name}</span></li>
+      </ol>
+    </nav>
+
+    {
+      gym.sample && (
+        <p class="notice" role="note">
+          <strong>Sample listing.</strong> This gym is fictional development data and must be replaced before launch.
+        </p>
+      )
+    }
+
+    <div class="detail-grid">
+      <div class="detail-intro">
+        <GymCover gym={gym} loading="eager" class="detail-cover" />
+
+        <header class="detail-head">
+          {
+            gym.beginnerFriendly && (
+              <p class="badge badge-beginner">
+                <Icon name="check" size={14} />
+                Beginner-friendly
+              </p>
+            )
+          }
+          <h1 class="detail-title">{gym.name}</h1>
+          <p class="detail-area">
+            <Icon name="pin" size={18} />
+            <span>{gym.area}</span>
+          </p>
+        </header>
+      </div>
+
+      <div class="detail-info">
+        <section class="detail-section" aria-labelledby="about-heading">
+          <h2 id="about-heading">About this gym</h2>
+          <p>{gym.description}</p>
+        </section>
+
+        <section class="detail-section" aria-labelledby="location-heading">
+          <h2 id="location-heading">Location</h2>
+          <address>{gym.address}</address>
+          {
+            gym.mapsUrl && (
+              <a
+                href={gym.mapsUrl}
+                class="text-link"
+                target="_blank"
+                rel="noopener noreferrer"
+                data-event="directions_click"
+                data-gym={gym.slug}
+              >
+                <Icon name="route" size={16} />
+                Get directions on Google Maps
+                <span class="visually-hidden">(opens in a new tab)</span>
+              </a>
+            )
+          }
+        </section>
+      </div>
+
+      <aside class="trial-panel" aria-labelledby="trial-heading">
+        <h2 id="trial-heading" class="trial-heading">Try a class</h2>
+        <p class:list={['trial-price', { 'price-unverified': !verified }]}>
+          {formatTrialPrice(gym.trialPrice)}
+        </p>
+        <p class="trial-price-note">
+          {verified ? 'Trial price confirmed with the gym.' : 'Trial price not yet confirmed — ask the gym.'}
+        </p>
+
+        {gym.trialDetails && <p class="trial-details">{gym.trialDetails}</p>}
+
+        {
+          cta ? (
+            <a
+              href={cta.href}
+              class="btn btn-accent btn-block"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-event="trial_cta_click"
+              data-cta={cta.type}
+              data-gym={gym.slug}
+            >
+              {cta.label}
+              <Icon name="external" size={18} />
+              <span class="visually-hidden">(opens {gym.name}'s page in a new tab)</span>
+            </a>
+          ) : (
+            <p class="trial-none">This gym hasn't shared a booking or contact link yet.</p>
+          )
+        }
+
+        {
+          secondaryContact && (
+            <a
+              href={secondaryContact}
+              class="btn btn-outline btn-block"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-event="contact_cta_click"
+              data-cta="contact"
+              data-gym={gym.slug}
+            >
+              Contact Gym
+              <span class="visually-hidden">(opens in a new tab)</span>
+            </a>
+          )
+        }
+
+        {cta && <p class="trial-fineprint">You'll arrange your trial directly with the gym on their own page.</p>}
+      </aside>
+    </div>
+
+    <p class="back-link">
+      <a href="/boxing" class="text-link">← All boxing gyms</a>
+    </p>
+  </div>
+</BaseLayout>

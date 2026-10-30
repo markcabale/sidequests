@@ -1,0 +1,34 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  name: string;
+  index: number;
+  /** Link for available sports. Omit for "Coming Soon". */
+  href?: string;
+  blurb: string;
+}
+const { name, index, href, blurb } = Astro.props;
+const number = String(index).padStart(2, '0');
+---
+
+{
+  href ? (
+    <a href={href} class="sport-card sport-card-live">
+      <span class="sport-number" aria-hidden="true">{number}</span>
+      <span class="sport-name">{name}</span>
+      <span class="sport-blurb">{blurb}</span>
+      <span class="sport-status sport-status-live">
+        Available now
+        <Icon name="arrow" size={16} />
+      </span>
+    </a>
+  ) : (
+    <div class="sport-card sport-card-soon">
+      <span class="sport-number" aria-hidden="true">{number}</span>
+      <span class="sport-name">{name}</span>
+      <span class="sport-blurb">{blurb}</span>
+      <span class="sport-status">Coming soon</span>
+    </div>
+  )
+}

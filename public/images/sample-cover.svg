@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="800" height="500">
+  <rect width="800" height="500" fill="#24242a"/>
+  <g fill="none" stroke="#34343c" stroke-width="2">
+    <path d="M0 380 L800 300"/>
+    <path d="M0 410 L800 330"/>
+    <path d="M0 440 L800 360"/>
+  </g>
+  <rect x="0" y="0" width="14" height="500" fill="#d8352c"/>
+  <text x="400" y="250" fill="#8c8c96" font-family="system-ui, sans-serif" font-size="28" font-weight="700" letter-spacing="6" text-anchor="middle">SAMPLE PHOTO</text>
+  <text x="400" y="290" fill="#6c6c76" font-family="system-ui, sans-serif" font-size="18" text-anchor="middle">Replace with a real gym photo</text>
+</svg>

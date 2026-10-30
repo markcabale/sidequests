@@ -1,0 +1,38 @@
+---
+import type { Gym } from '../data/gyms';
+
+interface Props {
+  gym: Gym;
+  /** Use "eager" for the main image above the fold. */
+  loading?: 'lazy' | 'eager';
+  class?: string;
+}
+const { gym, loading = 'lazy', class: className = '' } = Astro.props;
+const initials = gym.name
+  .replace(/\(.*?\)/g, '')
+  .split(/\s+/)
+  .filter(Boolean)
+  .slice(0, 2)
+  .map((word) => word[0]!.toUpperCase())
+  .join('');
+---
+
+<div class:list={['cover', className]}>
+  {
+    gym.image ? (
+      <img
+        src={gym.image}
+        alt={gym.imageAlt ?? `${gym.name} boxing gym`}
+        width="800"
+        height="500"
+        loading={loading}
+        decoding="async"
+      />
+    ) : (
+      <div class="cover-fallback" aria-hidden="true">
+        <span class="cover-initials">{initials}</span>
+        <span class="cover-label">Boxing</span>
+      </div>
+    )
+  }
+</div>

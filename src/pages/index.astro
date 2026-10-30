@@ -1,0 +1,66 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import GymCard from '../components/GymCard.astro';
+import SportCard from '../components/SportCard.astro';
+import Icon from '../components/Icon.astro';
+import { featuredGyms } from '../data/gyms';
+import { site } from '../site';
+
+const sports = [
+  { name: 'Boxing', href: '/boxing', blurb: 'Footwork, pad work and a serious sweat.' },
+  { name: 'Muay Thai', blurb: 'The art of eight limbs.' },
+  { name: 'Brazilian Jiu-Jitsu', blurb: 'Grappling, leverage and technique.' },
+  { name: 'Pickleball', blurb: 'Fast, social and easy to pick up.' },
+];
+---
+
+<BaseLayout
+  title={`${site.name} — Find beginner-friendly boxing gyms in ${site.city}`}
+  description="Discover beginner-friendly boxing gyms in Santa Rosa, Laguna. Compare trial prices and contact a gym to book your first session."
+>
+  <section class="hero">
+    <div class="container hero-inner">
+      <p class="eyebrow">{site.tagline}</p>
+      <h1 class="hero-title">Your next side quest starts here.</h1>
+      <p class="hero-sub">Discover beginner-friendly boxing gyms in Santa Rosa, Laguna.</p>
+      <a href="/boxing" class="btn btn-accent btn-large">
+        Explore Boxing Gyms
+        <Icon name="arrow" />
+      </a>
+    </div>
+  </section>
+
+  <section id="sports" class="section" aria-labelledby="sports-heading">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="sports-heading" class="section-title">Explore sports</h2>
+        <p class="section-sub">Boxing is live now. More sports are on the way.</p>
+      </div>
+      <div class="sport-grid">
+        {sports.map((sport, i) => <SportCard {...sport} index={i + 1} />)}
+      </div>
+    </div>
+  </section>
+
+  {
+    featuredGyms.length > 0 && (
+      <section class="section section-tint" aria-labelledby="featured-heading">
+        <div class="container">
+          <div class="section-head section-head-row">
+            <div>
+              <h2 id="featured-heading" class="section-title">Featured boxing gyms</h2>
+              <p class="section-sub">A few places to throw your first jab.</p>
+            </div>
+            <a href="/boxing" class="text-link">
+              See all gyms
+              <Icon name="arrow" size={16} />
+            </a>
+          </div>
+          <div class="gym-grid">
+            {featuredGyms.map((gym) => <GymCard gym={gym} headingLevel={3} linkLabel="View Details" />)}
+          </div>
+        </div>
+      </section>
+    )
+  }
+</BaseLayout>

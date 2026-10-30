@@ -1,0 +1,53 @@
+---
+import type { Gym } from '../data/gyms';
+import { formatTrialPrice, hasVerifiedPrice } from '../data/gyms';
+import GymCover from './GymCover.astro';
+import Icon from './Icon.astro';
+
+interface Props {
+  gym: Gym;
+  /** Heading level for the gym name, to keep page outlines correct. */
+  headingLevel?: 2 | 3;
+  linkLabel?: string;
+}
+const { gym, headingLevel = 3, linkLabel = 'View Details' } = Astro.props;
+const Heading = `h${headingLevel}` as 'h2' | 'h3';
+const href = `/boxing/${gym.slug}`;
+const verified = hasVerifiedPrice(gym);
+const searchText = `${gym.name} ${gym.area} ${gym.address}`.toLowerCase();
+---
+
+<article class="gym-card" data-gym-card data-search={searchText}>
+  <GymCover gym={gym} />
+  <div class="gym-card-body">
+    {
+      (gym.sample || gym.beginnerFriendly) && (
+        <ul class="badges" aria-label="Labels">
+          {gym.sample && <li class="badge badge-sample">Sample listing</li>}
+          {gym.beginnerFriendly && (
+            <li class="badge badge-beginner">
+              <Icon name="check" size={14} />
+              Beginner-friendly
+            </li>
+          )}
+        </ul>
+      )
+    }
+    <Heading class="gym-card-title">{gym.name}</Heading>
+    <p class="gym-card-area">
+      <Icon name="pin" size={16} />
+      <span>{gym.area}</span>
+    </p>
+    <div class="gym-card-footer">
+      <p class:list={['price', { 'price-unverified': !verified }]}>
+        <span class="price-label">Trial</span>
+        <span class="price-value">{formatTrialPrice(gym.trialPrice)}</span>
+      </p>
+      <a href={href} class="btn btn-small btn-dark card-link">
+        {linkLabel}
+        <span class="visually-hidden">: {gym.name}</span>
+        <Icon name="arrow" size={16} />
+      </a>
+    </div>
+  </div>
+</article>
