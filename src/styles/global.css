@@ -168,6 +168,7 @@ a { color: inherit; }
   text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px;
 }
 .text-link:hover { color: var(--accent-dark); }
+.text-links { display: flex; flex-wrap: wrap; gap: 0 20px; }
 
 /* ---------- Type helpers ---------- */
 .eyebrow {
@@ -186,6 +187,7 @@ a { color: inherit; }
   width: 100%; height: 6px; background: var(--accent);
 }
 .hero-inner { padding-top: 72px; padding-bottom: 80px; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
 .hero .eyebrow { color: #ff8a80; }
 .hero-title {
   margin-top: 16px;
@@ -309,6 +311,7 @@ a { color: inherit; }
   font-size: 0.78rem; font-weight: 700; line-height: 1.5;
 }
 .badge-beginner { background: var(--ok-soft); color: var(--ok); }
+.badge-sport { background: var(--paper-2); color: var(--ink); }
 .badge-sample { background: #fff4d6; color: #7a4b00; border: 1px dashed #c08a1e; }
 
 /* ---------- Cover image ---------- */

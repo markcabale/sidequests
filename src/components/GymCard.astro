@@ -1,6 +1,7 @@
 ---
 import type { Gym } from '../data/gyms';
-import { formatTrialPrice, hasVerifiedPrice } from '../data/gyms';
+import { formatTrialPrice, gymHref, hasVerifiedPrice } from '../data/gyms';
+import { getSport } from '../data/sports';
 import GymCover from './GymCover.astro';
 import Icon from './Icon.astro';
 
@@ -9,10 +10,12 @@ interface Props {
   /** Heading level for the gym name, to keep page outlines correct. */
   headingLevel?: 2 | 3;
   linkLabel?: string;
+  /** Show the sport as a label, for lists that mix sports. */
+  showSport?: boolean;
 }
-const { gym, headingLevel = 3, linkLabel = 'View Details' } = Astro.props;
+const { gym, headingLevel = 3, linkLabel = 'View Details', showSport = false } = Astro.props;
 const Heading = `h${headingLevel}` as 'h2' | 'h3';
-const href = `/boxing/${gym.slug}`;
+const href = gymHref(gym);
 const verified = hasVerifiedPrice(gym);
 const searchText = `${gym.name} ${gym.area} ${gym.address}`.toLowerCase();
 ---
@@ -21,9 +24,10 @@ const searchText = `${gym.name} ${gym.area} ${gym.address}`.toLowerCase();
   <GymCover gym={gym} />
   <div class="gym-card-body">
     {
-      (gym.sample || gym.beginnerFriendly) && (
+      (gym.sample || gym.beginnerFriendly || showSport) && (
         <ul class="badges" aria-label="Labels">
           {gym.sample && <li class="badge badge-sample">Sample listing</li>}
+          {showSport && <li class="badge badge-sport">{getSport(gym.sport).name}</li>}
           {gym.beginnerFriendly && (
             <li class="badge badge-beginner">
               <Icon name="check" size={14} />

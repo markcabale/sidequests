@@ -1,8 +1,9 @@
 ---
+import { liveSports } from '../data/sports';
 import { site } from '../site';
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
-const onBoxing = path === '/boxing' || path.startsWith('/boxing/');
+const isCurrent = (slug: string) => path === `/${slug}` || path.startsWith(`/${slug}/`);
 ---
 
 <header class="site-header">
@@ -13,7 +14,15 @@ const onBoxing = path === '/boxing' || path.startsWith('/boxing/');
     </a>
     <nav aria-label="Main">
       <ul class="nav-list">
-        <li><a href="/boxing" aria-current={onBoxing ? 'page' : undefined}>Boxing</a></li>
+        {
+          liveSports.map((sport) => (
+            <li>
+              <a href={`/${sport.slug}`} aria-current={isCurrent(sport.slug) ? 'page' : undefined}>
+                {sport.name}
+              </a>
+            </li>
+          ))
+        }
         <li><a href="/#sports">Explore Sports</a></li>
       </ul>
     </nav>

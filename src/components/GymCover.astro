@@ -1,5 +1,6 @@
 ---
 import type { Gym } from '../data/gyms';
+import { getSport } from '../data/sports';
 
 interface Props {
   gym: Gym;
@@ -8,6 +9,7 @@ interface Props {
   class?: string;
 }
 const { gym, loading = 'lazy', class: className = '' } = Astro.props;
+const sportName = getSport(gym.sport).name;
 const initials = gym.name
   .replace(/\(.*?\)/g, '')
   .split(/\s+/)
@@ -22,7 +24,7 @@ const initials = gym.name
     gym.image ? (
       <img
         src={gym.image}
-        alt={gym.imageAlt ?? `${gym.name} boxing gym`}
+        alt={gym.imageAlt ?? `${gym.name} ${sportName} gym`}
         width="800"
         height="500"
         loading={loading}
@@ -31,7 +33,7 @@ const initials = gym.name
     ) : (
       <div class="cover-fallback" aria-hidden="true">
         <span class="cover-initials">{initials}</span>
-        <span class="cover-label">Boxing</span>
+        <span class="cover-label">{sportName}</span>
       </div>
     )
   }

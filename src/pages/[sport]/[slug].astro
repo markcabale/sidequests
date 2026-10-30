@@ -4,14 +4,20 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import GymCover from '../../components/GymCover.astro';
 import Icon from '../../components/Icon.astro';
 import { activeGyms, formatTrialPrice, hasVerifiedPrice, type Gym } from '../../data/gyms';
+import { getSport, type LiveSport } from '../../data/sports';
 
 export const getStaticPaths = (() =>
-  activeGyms.map((gym) => ({ params: { slug: gym.slug }, props: { gym } }))) satisfies GetStaticPaths;
+  activeGyms.map((gym) => ({
+    params: { sport: gym.sport, slug: gym.slug },
+    props: { gym, sport: getSport(gym.sport) },
+  }))) satisfies GetStaticPaths;
 
 interface Props {
   gym: Gym;
+  sport: LiveSport;
 }
-const { gym } = Astro.props;
+const { gym, sport } = Astro.props;
+const sportHref = `/${sport.slug}`;
 
 // Primary CTA: booking URL first, then contact URL, otherwise nothing.
 const cta = gym.bookingUrl
@@ -22,17 +28,17 @@ const cta = gym.bookingUrl
 // Secondary contact link when the gym has both booking and contact URLs.
 const secondaryContact = gym.bookingUrl && gym.contactUrl ? gym.contactUrl : undefined;
 const verified = hasVerifiedPrice(gym);
-const metaDescription = `${gym.name} in ${gym.area}. ${
+const metaDescription = `${gym.name}, a ${sport.name} gym in ${gym.area}. ${
   verified ? `Trial: ${formatTrialPrice(gym.trialPrice)}.` : 'Ask the gym about trial prices.'
 } See the address and how to book or contact the gym.`;
 ---
 
-<BaseLayout title={`${gym.name} — Boxing in ${gym.area}`} description={metaDescription}>
+<BaseLayout title={`${gym.name} — ${sport.name} in ${gym.area}`} description={metaDescription}>
   <div class="container detail">
     <nav aria-label="Breadcrumb" class="breadcrumb">
       <ol>
         <li><a href="/">Home</a></li>
-        <li><a href="/boxing">Boxing</a></li>
+        <li><a href={sportHref}>{sport.name}</a></li>
         <li><span aria-current="page">{gym.name}</span></li>
       </ol>
     </nav>
@@ -147,7 +153,7 @@ const metaDescription = `${gym.name} in ${gym.area}. ${
     </div>
 
     <p class="back-link">
-      <a href="/boxing" class="text-link">← All boxing gyms</a>
+      <a href={sportHref} class="text-link">← All {sport.name} gyms</a>
     </p>
   </div>
 </BaseLayout>

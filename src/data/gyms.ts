@@ -13,17 +13,21 @@
  *   the current price; leave it out and the site shows "Ask for price".
  * - `beginnerFriendly` should only be `true` if the gym has confirmed it welcomes
  *   complete beginners. Leave it out otherwise.
- * - `slug` becomes the page URL (/boxing/<slug>). Use lowercase letters, numbers
+ * - `sport` must be a live sport from src/data/sports.ts ('boxing', 'muay-thai').
+ *   A gym that teaches both gets one listing per sport, with different slugs and ids.
+ * - `slug` becomes the page URL (/<sport>/<slug>). Use lowercase letters, numbers
  *   and hyphens, keep it unique, and avoid changing it after launch.
  * - `image` is a path inside /public, e.g. "/images/gyms/my-gym.jpg". Only use
  *   photos you have permission to publish.
  */
 
+import { getSport, type SportSlug } from './sports';
+
 export interface Gym {
   id: string;
   slug: string;
   name: string;
-  sport: 'boxing';
+  sport: SportSlug;
   /** Full street address shown on the detail page. */
   address: string;
   /** Short area summary shown on cards, e.g. "Balibago, Santa Rosa". */
@@ -31,7 +35,7 @@ export interface Gym {
   description: string;
   /** Path under /public, e.g. "/images/gyms/my-gym.jpg". */
   image?: string;
-  /** Alt text for the image. Defaults to "<name> boxing gym". */
+  /** Alt text for the image. Defaults to "<name> <sport> gym". */
   imageAlt?: string;
   beginnerFriendly?: boolean;
   /** Verified trial price in PHP. 0 means a confirmed free trial. */
@@ -98,7 +102,6 @@ export const gyms: Gym[] = [
     beginnerFriendly: true,
     trialPrice: 0,
     bookingUrl: 'https://example.com/book',
-    featured: true,
     active: true,
     sample: true,
   },
@@ -125,10 +128,52 @@ export const gyms: Gym[] = [
     active: false,
     sample: true,
   },
+  {
+    id: 'sample-6',
+    slug: 'sample-eight-limbs-muay-thai',
+    name: 'Eight Limbs Muay Thai (Sample)',
+    sport: 'muay-thai',
+    address: '88 Sample Road, Barangay Example, Santa Rosa, Laguna',
+    area: 'Sample area, Santa Rosa',
+    description:
+      'FICTIONAL SAMPLE LISTING. Previews a Muay Thai gym with a confirmed price, beginner-friendly label, and both booking and contact links.',
+    beginnerFriendly: true,
+    trialPrice: 400,
+    trialDetails: 'Sample text: one 90-minute fundamentals class. Shin guards and gloves available to borrow.',
+    bookingUrl: 'https://example.com/book',
+    contactUrl: 'https://example.com/contact',
+    mapsUrl: 'https://www.google.com/maps/search/?api=1&query=Santa+Rosa+Laguna',
+    featured: true,
+    active: true,
+    sample: true,
+  },
+  {
+    id: 'sample-7',
+    slug: 'sample-clinch-camp',
+    name: 'Clinch Camp (Sample)',
+    sport: 'muay-thai',
+    address: '12 Placeholder Street, Santa Rosa, Laguna',
+    area: 'Placeholder district, Santa Rosa',
+    description:
+      'FICTIONAL SAMPLE LISTING. Previews a Muay Thai gym with no confirmed price and only a contact link.',
+    trialDetails: 'Sample text: trial classes on weekend mornings. Message the gym to reserve a slot.',
+    contactUrl: 'https://example.com/contact',
+    active: true,
+    sample: true,
+  },
 ];
 
 /** All listings that should appear on the site. */
 export const activeGyms = gyms.filter((gym) => gym.active);
+
+export function gymsForSport(sport: SportSlug): Gym[] {
+  return activeGyms.filter((gym) => gym.sport === sport);
+}
+
+/** Page URL for a gym, e.g. /muay-thai/my-gym. */
+export function gymHref(gym: Gym): string {
+  return `/${gym.sport}/${gym.slug}`;
+}
 
 /** Up to three featured gyms for the homepage, falling back to the first active gyms. */
 export const featuredGyms = (() => {
@@ -157,4 +202,5 @@ for (const gym of gyms) {
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(gym.slug)) {
     throw new Error(`Invalid slug "${gym.slug}" in src/data/gyms.ts — use lowercase letters, numbers and hyphens.`);
   }
+  getSport(gym.sport); // throws if the sport isn't live
 }

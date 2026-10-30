@@ -1,20 +1,30 @@
 ---
+import type { GetStaticPaths } from 'astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import GymCard from '../../components/GymCard.astro';
 import Icon from '../../components/Icon.astro';
-import { activeGyms } from '../../data/gyms';
+import { gymsForSport } from '../../data/gyms';
+import { liveSports, type LiveSport } from '../../data/sports';
 
-const count = activeGyms.length;
+export const getStaticPaths = (() =>
+  liveSports.map((sport) => ({ params: { sport: sport.slug }, props: { sport } }))) satisfies GetStaticPaths;
+
+interface Props {
+  sport: LiveSport;
+}
+const { sport } = Astro.props;
+const gyms = gymsForSport(sport.slug);
+const count = gyms.length;
 ---
 
 <BaseLayout
-  title="Boxing Gyms in Santa Rosa, Laguna"
-  description="Browse boxing gyms in Santa Rosa, Laguna. See trial prices, beginner-friendly gyms, and how to book or contact each gym for your first session."
+  title={`${sport.name} Gyms in Santa Rosa, Laguna`}
+  description={`Browse ${sport.name} gyms in Santa Rosa, Laguna. See trial prices, beginner-friendly gyms, and how to book or contact each gym for your first session.`}
 >
   <section class="page-head">
     <div class="container">
-      <p class="eyebrow">Boxing · Santa Rosa, Laguna</p>
-      <h1 class="page-title">Boxing Gyms in Santa Rosa</h1>
+      <p class="eyebrow">{sport.name} · Santa Rosa, Laguna</p>
+      <h1 class="page-title">{sport.name} Gyms in Santa Rosa</h1>
       <p class="page-sub">Pick a gym, check the trial, and reach out to book your first session.</p>
 
       <form class="search" role="search" data-search-form hidden onsubmit="return false">
@@ -25,7 +35,7 @@ const count = activeGyms.length;
             id="gym-search"
             type="search"
             name="q"
-            placeholder="e.g. Balibago"
+            placeholder={sport.searchExample ? `e.g. ${sport.searchExample}` : undefined}
             autocomplete="off"
             aria-describedby="search-status"
             data-search-input
@@ -44,14 +54,14 @@ const count = activeGyms.length;
       {
         count > 0 ? (
           <div class="gym-grid" data-gym-list>
-            {activeGyms.map((gym) => (
+            {gyms.map((gym) => (
               <GymCard gym={gym} headingLevel={2} linkLabel="View Gym" />
             ))}
           </div>
         ) : (
           <div class="empty-state">
             <h2>No gyms listed yet</h2>
-            <p>We're adding boxing gyms in Santa Rosa now. Check back soon.</p>
+            <p>We're adding {sport.name} gyms in Santa Rosa now. Check back soon.</p>
           </div>
         )
       }

@@ -1,4 +1,5 @@
 ---
+import { liveSports } from '../data/sports';
 import { site } from '../site';
 const year = new Date().getFullYear();
 ---
@@ -15,7 +16,7 @@ const year = new Date().getFullYear();
     <nav aria-label="Footer">
       <ul class="footer-nav">
         <li><a href="/">Home</a></li>
-        <li><a href="/boxing">Boxing gyms</a></li>
+        {liveSports.map((sport) => <li><a href={`/${sport.slug}`}>{sport.name} gyms</a></li>)}
         <li><a href="/#sports">Explore sports</a></li>
       </ul>
     </nav>

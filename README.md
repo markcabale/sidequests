@@ -1,6 +1,6 @@
-# Sidequest — boxing gym trial directory (MVP)
+# Sidequest — boxing & Muay Thai gym trial directory (MVP)
 
-A static Astro site that helps beginners find boxing gyms in Santa Rosa, Laguna and reach each gym's own booking or contact page. No database, backend, accounts, or API keys.
+A static Astro site that helps beginners find boxing and Muay Thai gyms in Santa Rosa, Laguna and reach each gym's own booking or contact page. No database, backend, accounts, or API keys.
 
 > **"Sidequest" is a placeholder brand.** Change the name in `src/site.ts`, and the logo mark in `src/components/Header.astro` / `Footer.astro` and `public/favicon.svg`.
 
@@ -8,9 +8,11 @@ A static Astro site that helps beginners find boxing gyms in Santa Rosa, Laguna 
 
 | URL | What it is |
 | --- | --- |
-| `/` | Homepage: hero, sports (only Boxing is live), up to 3 featured gyms |
-| `/boxing` | All active gyms with a client-side search by name or address |
-| `/boxing/<slug>` | One page per active gym, generated at build time |
+| `/` | Homepage: hero, sports (Boxing and Muay Thai are live), up to 3 featured gyms |
+| `/boxing`, `/muay-thai` | All active gyms for that sport, with a client-side search by name or address |
+| `/<sport>/<slug>` | One page per active gym, generated at build time |
+
+Sports are listed in **`src/data/sports.ts`**. To launch another sport, add its slug to `SportSlug`, set `live: true`, and add gyms with that `sport`. Its directory, nav and footer links, and homepage card update automatically.
 
 ## Local development
 
@@ -32,7 +34,7 @@ All listings live in **`src/data/gyms.ts`**. Adding, editing or removing a gym o
   id: 'gym-001',                     // unique, never shown
   slug: 'example-boxing-gym',        // URL: /boxing/example-boxing-gym — lowercase, hyphens, unique
   name: 'Example Boxing Gym',
-  sport: 'boxing',
+  sport: 'boxing',                   // 'boxing' or 'muay-thai'. A gym teaching both gets one listing per sport
   address: 'Full street address, Santa Rosa, Laguna',
   area: 'Balibago, Santa Rosa',      // short summary shown on cards
   description: 'One or two sentences, in your own words.',
@@ -60,7 +62,7 @@ The build fails with a clear message if two gyms share a `slug` or `id`, or a sl
 
 ### Replacing the sample data
 
-The five listings that ship in `gyms.ts` are **fictional** (`sample: true`, names end in "(Sample)", URLs point to `example.com`). They show a yellow "Sample listing" badge so they can't be mistaken for real gyms. Delete all of them before launch and add verified gyms. Also delete `public/images/sample-cover.svg`.
+The seven listings that ship in `gyms.ts` are **fictional** (`sample: true`, names end in "(Sample)", URLs point to `example.com`). They show a yellow "Sample listing" badge so they can't be mistaken for real gyms. Delete all of them before launch and add verified gyms. Also delete `public/images/sample-cover.svg`.
 
 ## Analytics hooks
 
